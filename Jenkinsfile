@@ -17,8 +17,8 @@ stage('Development') {
 }
 
 stage('QA') {
-    parallel([1,2].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
-//    echo "Test results: ${testResult(currentBuild)}"
+//    parallel([1,2].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
+    echo "Test results for QA: "//${testResult(currentBuild)}"
 }
 
 milestone 1
@@ -79,7 +79,7 @@ stage('Build Docker Image'){
                     mavenLocalRepo: '.repository') {
 
                 // Run the maven build
-                sh 'mvn clean install dockerfile:build'
+//                sh 'mvn dockerfile:build'
 
             }
         } catch (e) {

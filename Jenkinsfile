@@ -6,7 +6,7 @@ servers = new Servers(this)
 stage('Dev') {
     node {
         checkout scm
-        mvn '-o clean package'
+        mvn '-o clean verify'
         dir('target') {stash name: 'war', includes: 'x.war'}
     }
 }

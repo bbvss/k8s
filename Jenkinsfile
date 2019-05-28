@@ -48,7 +48,7 @@ stage ('Production') {
     }
 }
 
-def runTests(duration) {
+def runTests( duration) {
     node {
         checkout scm
 //        mvn "-o -f sometests test -Durl=${jettyUrl}${id}/ -Dduration=${duration}"
@@ -72,7 +72,7 @@ stage('Build Docker Image'){
         DOCKER_IMAGE_NAME="bbvss/springboot-k8s"
         sh 'mvn clean install dockerfile:build'
     } catch(e) {
-        notify("Something failed building Docker Image")
+//        notify("Something failed building Docker Image")
         throw e
     }
 }
@@ -84,7 +84,7 @@ stage('Push image to container registry'){
         sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)
     } catch(e) {
-        notify("Something failed pushing Docker Image")
+//        notify("Something failed pushing Docker Image")
         throw e
     }
 }

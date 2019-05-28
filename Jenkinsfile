@@ -1,19 +1,24 @@
-@Library('tools') import demo.Servers
-
-jettyUrl = 'http://localhost:8081/'
-servers = new Servers(this)
-
-stage('Dev') {
+stage('Development') {
     node {
         checkout scm
-        mvn '-o clean package'
-        dir('target') {stash name: 'war', includes: 'x.war'}
+        withMaven(
+                // Maven installation declared in the Jenkins "Global Tool Configuration"
+                maven: 'M3',
+                // Maven settings.xml file defined with the Jenkins Config File Provider Plugin
+                // Maven settings and global settings can also be defined in Jenkins Global Tools Configuration
+                mavenLocalRepo: '.repository') {
+
+            // Run the maven build
+            sh "mvn clean install"
+
+        }
+        dir('target') {stash name: 'jar', includes: 'app.jar'}
     }
 }
 
 stage('QA') {
-    parallel([20, 30].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
-    echo "Test results: ${testResult(currentBuild)}"
+    parallel([1,2].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
+//    echo "Test results: ${testResult(currentBuild)}"
 }
 
 milestone 1
@@ -21,9 +26,9 @@ stage('Staging') {
     lock(resource: 'staging-server', inversePrecedence: true) {
         milestone 2
         node {
-            servers.deploy 'staging'
+            sh 'docker run --name staging -p 8080:8080 bbvss/springboot-k8s'
         }
-        input message: "Does ${jettyUrl}staging/ look good?"
+        input message: "Does http://localhost:8080 look good?"
     }
     try {
         checkpoint('Before production')
@@ -36,10 +41,9 @@ milestone 3
 stage ('Production') {
     lock(resource: 'production-server', inversePrecedence: true) {
         node {
-            sh "wget -O - -S ${jettyUrl}staging/"
             echo 'Production server looks to be alive'
-            servers.deploy 'production'
-            echo "Deployed to ${jettyUrl}production/"
+            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
+            echo "Deployed to production http://localhost:8080"
         }
     }
 }
@@ -47,8 +51,17 @@ stage ('Production') {
 def runTests(duration) {
     node {
         checkout scm
-        servers.withDeployment {id ->
-            mvn "-o -f sometests test -Durl=${jettyUrl}${id}/ -Dduration=${duration}"
+//        mvn "-o -f sometests test -Durl=${jettyUrl}${id}/ -Dduration=${duration}"
+        withMaven(
+                // Maven installation declared in the Jenkins "Global Tool Configuration"
+                maven: 'M3',
+                // Maven settings.xml file defined with the Jenkins Config File Provider Plugin
+                // Maven settings and global settings can also be defined in Jenkins Global Tools Configuration
+                mavenLocalRepo: '.repository') {
+
+            // Run the maven build
+            sh "mvn test"
+
         }
         junit '**/target/surefire-reports/TEST-*.xml'
     }

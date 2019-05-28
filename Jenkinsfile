@@ -100,9 +100,9 @@ stage('Kubernetes Setup'){
     }
 }
 
-notify("Process finish")
+//notify("Process finish")
 
 
-def notify(String message) {
-    slackSend (color: '#FFFF00', message: "${message}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-}
+//def notify(String message) {
+//    slackSend (color: '#FFFF00', message: "${message}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+//}

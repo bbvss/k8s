@@ -68,54 +68,60 @@ def runTests( duration) {
 }
 
 stage('Build Docker Image'){
-    try{
-        DOCKER_IMAGE_NAME="bbvss/springboot-k8s"
-        withMaven(
-                // Maven installation declared in the Jenkins "Global Tool Configuration"
-                maven: 'M3',
-                // Maven settings.xml file defined with the Jenkins Config File Provider Plugin
-                // Maven settings and global settings can also be defined in Jenkins Global Tools Configuration
-                mavenLocalRepo: '.repository') {
+    node {
+        try {
+            DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"
+            withMaven(
+                    // Maven installation declared in the Jenkins "Global Tool Configuration"
+                    maven: 'M3',
+                    // Maven settings.xml file defined with the Jenkins Config File Provider Plugin
+                    // Maven settings and global settings can also be defined in Jenkins Global Tools Configuration
+                    mavenLocalRepo: '.repository') {
 
-            // Run the maven build
-            sh 'mvn clean install dockerfile:build'
+                // Run the maven build
+                sh 'mvn clean install dockerfile:build'
 
-        }
-    } catch(e) {
+            }
+        } catch (e) {
 //        notify("Something failed building Docker Image")
-        throw e
+            throw e
+        }
     }
 }
 
 stage('Push image to container registry'){
-    agent { dockerfile true }
-    try{
-        docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
+    node {
+        agent { dockerfile true }
+        try {
+            docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
 
-            def customImage = docker.build("bbvss/springboot-k8s:${env.BUILD_ID}")
+                def customImage = docker.build("bbvss/springboot-k8s:${env.BUILD_ID}")
 
-            /* Push the container to the custom Registry */
-            customImage.push()
-        }
+                /* Push the container to the custom Registry */
+                customImage.push()
+            }
 //        sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
 //        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
 //        sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)
-    } catch(e) {
+        } catch (e) {
 //        notify("Something failed pushing Docker Image")
-        throw e
+            throw e
+        }
     }
 }
 
 
 // here the error occurs
 stage('Kubernetes Setup'){
-    try{
-        docker
-        sh("kubectl create -f app-deployment.yml -v=8")
-    } catch(e) {
+    node {
+        try {
+            docker
+            sh("kubectl create -f app-deployment.yml -v=8")
+        } catch (e) {
 //        notify("Something failed Kubernetes Setup")
-        throw e
+            throw e
+        }
     }
 }
 

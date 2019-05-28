@@ -91,7 +91,7 @@ stage('Build Docker Image'){
 
 stage('Push image to container registry'){
     node {
-        agent { dockerfile true }
+//        agent { dockerfile true }
         try {
             docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
 

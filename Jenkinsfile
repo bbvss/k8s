@@ -26,7 +26,7 @@ stage('Staging') {
     lock(resource: 'staging-server', inversePrecedence: true) {
         milestone 2
         node {
-            sh 'docker run --name staging -p 8080:8080 bbvss/springboot-k8s'
+//            sh 'docker run --name staging -p 8080:8080 bbvss/springboot-k8s'
         }
         input message: "Does http://localhost:8080 look good?"
     }
@@ -42,7 +42,7 @@ stage ('Production') {
     lock(resource: 'production-server', inversePrecedence: true) {
         node {
             echo 'Production server looks to be alive'
-            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
+//            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
             echo "Deployed to production http://localhost:8080"
         }
     }
@@ -69,7 +69,7 @@ def runTests(duration) {
 
 stage('Build Docker Image'){
     try{
-        DOCKER_IMAGE_NAME="docker image name"
+        DOCKER_IMAGE_NAME="bbvss/springboot-k8s"
         sh 'mvn clean install dockerfile:build'
     } catch(e) {
         notify("Something failed building Docker Image")

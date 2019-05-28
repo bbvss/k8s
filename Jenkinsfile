@@ -1,8 +1,3 @@
-@Library('tools') import demo.Servers
-
-jettyUrl = 'http://localhost:8081/'
-servers = new Servers(this)
-
 stage('Development') {
     node {
         checkout scm
@@ -21,7 +16,7 @@ stage('Staging') {
     lock(resource: 'staging-server', inversePrecedence: true) {
         milestone 2
         node {
-            servers.deploy 'staging'
+            sh 'docker run -p 8080:8080 bbvss/springboot-k8s'
         }
         input message: "Does ${jettyUrl}staging/ look good?"
     }
@@ -38,7 +33,7 @@ stage ('Production') {
         node {
             sh "wget -O - -S ${jettyUrl}staging/"
             echo 'Production server looks to be alive'
-            servers.deploy 'production'
+            sh 'docker run -p 8080:8080 bbvss/springboot-k8s'
             echo "Deployed to ${jettyUrl}production/"
         }
     }

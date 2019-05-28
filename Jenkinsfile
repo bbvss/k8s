@@ -92,22 +92,23 @@ stage('Build Docker Image'){
 stage('Push image to container registry'){
     node {
 //        agent { dockerfile true }
-        try {
-            docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
-
-                def customImage = docker.build("bbvss/springboot-k8s:${env.BUILD_ID}")
-
-                /* Push the container to the custom Registry */
-                customImage.push()
-            }
+//        try {
+//            docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
+//
+//                def customImage = docker.build("bbvss/springboot-k8s:${env.BUILD_ID}")
+//
+//                /* Push the container to the custom Registry */
+//                customImage.push()
+            echo 'Docker push...'
+//            }
 //        sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
 //        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
 //        sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)
-        } catch (e) {
+//        } catch (e) {
 //        notify("Something failed pushing Docker Image")
-            throw e
-        }
+//            throw e
+//        }
     }
 }
 

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+  labels:
+    name: springboot
+    app: springboot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+  template:
+    metadata:
+      name: springboot
+      labels:
+        app: springboot
+        name: springboot
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: springboot
+          image: bbvss/k8s
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot
+  labels:
+    app: springboot
+    name: springboot
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      nodePort: 30080
+  selector:
+    app: springboot
+    name: springboot

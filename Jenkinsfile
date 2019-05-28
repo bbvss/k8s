@@ -3,7 +3,7 @@
 jettyUrl = 'http://localhost:8081/'
 servers = new Servers(this)
 
-stage('Dev') {
+stage('Development') {
     node {
         checkout scm
         mvn '-o clean package'

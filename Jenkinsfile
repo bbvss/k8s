@@ -17,7 +17,7 @@ stage('Development') {
 }
 
 stage('QA') {
-    parallel([20, 30].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
+    parallel([5, 10].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
     echo "Test results: ${testResult(currentBuild)}"
 }
 

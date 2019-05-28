@@ -28,7 +28,7 @@ stage('Staging') {
         node {
             sh 'docker run -p 8080:8080 bbvss/springboot-k8s'
         }
-        input message: "Does ${jettyUrl}staging/ look good?"
+        input message: "Does staging/ look good?"
     }
     try {
         checkpoint('Before production')
@@ -44,7 +44,7 @@ stage ('Production') {
             sh "wget -O - -S ${jettyUrl}staging/"
             echo 'Production server looks to be alive'
             sh 'docker run -p 8080:8080 bbvss/springboot-k8s'
-            echo "Deployed to ${jettyUrl}production/"
+            echo "Deployed to production/"
         }
     }
 }

@@ -1,7 +1,7 @@
 stage('Development') {
     node {
         checkout scm
-        sh 'mvn -o clean package'
+        mvn' -o clean package'
         dir('target') {stash name: 'jar', includes: 'app.jar'}
     }
 }

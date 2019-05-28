@@ -1,25 +1,22 @@
 package com.example.personapp;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 class PersonController {
 
     @GetMapping(path = "/persons")
-    public String getPersons(Model model) {
-        model.addAttribute("persons", Arrays.asList("John", "David", "Peter"));
-        return "persons";
+    public ResponseEntity<List<Person>> getPersons() {
+        List<Person> persons = new ArrayList<>();
+        persons.add(new Person("John"));
+        persons.add(new Person("David"));
+        persons.add(new Person("Peter"));
+        return ResponseEntity.ok().body(persons);
     }
 
-    @GetMapping(path = "/logout")
-    public String logout(HttpServletRequest request) throws ServletException {
-        request.logout();
-        return "/";
-    }
 }

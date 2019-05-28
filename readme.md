@@ -1,8 +1,8 @@
 ## Setup Prerequisites
 
-This project shows a simple Spring Boot application. Both, the application and Keycloak (including the database), will be deployed to a Kubernetes cluster.
+This project shows a simple Spring Boot application. The application will be deployed to a Kubernetes cluster.
 
-The Kubernetes cluster is created via Minikube, which provides tools for creating clusters on a local machine easily. Keycloak, the database, and the Spring Boot application are deployed to the newly created cluster. 
+The Kubernetes cluster is created via docker-for-desktop, which provides tools for creating clusters on a local machine easily. Keycloak, the database, and the Spring Boot application are deployed to the newly created cluster. 
 The following versions are used throughout the example:
 
 * __Docker_Engine__: 18.09.02

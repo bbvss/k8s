@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent { node { label 'docker' } }
+//    agent { node { label 'docker' } }
 
     environment {
         DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"

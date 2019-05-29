@@ -41,7 +41,7 @@ pipeline {
                 }
                 input message: "Does http://localhost:8080 look good?"
 
-                checkpoint('Before production')
+//                checkpoint('Before production')
             }
         }
 

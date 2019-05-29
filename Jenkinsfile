@@ -85,11 +85,12 @@ pipeline {
 //                customImage.push()
                 echo 'Docker push...'
 //            }
-//        sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
-//        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
+
                 script {
-                    docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
-                    docker push 'bbvss/springboot-k8s'
+//                            sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
+        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
+//                    docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
+//                    docker push 'bbvss/springboot-k8s'
                 }
 //        sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)

@@ -2,6 +2,9 @@
 pipeline {
     agent { node { label 'docker' } }
 
+    environment {
+        DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"
+    }
     stages {
         stage('Development') {
             steps {
@@ -56,7 +59,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                    DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"
+                echo 'Build Docker Image...'
                     withMaven(
                             // Maven installation declared in the Jenkins "Global Tool Configuration"
                             maven: 'M3',
@@ -84,8 +87,10 @@ pipeline {
 //            }
 //        sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
 //        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
-                docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
-                docker push 'bbvss/springboot-k8s'
+                script {
+                    docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
+                    docker push 'bbvss/springboot-k8s'
+                }
 //        sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)
 //        } catch (e) {

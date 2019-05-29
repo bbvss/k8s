@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
-//    agent { node { label 'docker' } }
+    agent { node { label 'docker' } }
 
     stages {
         stage('Development') {
@@ -28,7 +28,7 @@ pipeline {
             }//${testResult(currentBuild)}"}
         }
 
-        milestone 1
+//        milestone 1
         stage('Staging') {
             steps {
                 lock(resource: 'staging-server', inversePrecedence: true) {
@@ -38,15 +38,11 @@ pipeline {
                 }
                 input message: "Does http://localhost:8080 look good?"
 
-                try {
                     checkpoint('Before production')
-                } catch (NoSuchMethodError ignored) {
-                    echo 'Checkpoint feature available in CloudBees Jenkins Enterprise.'
-                }
             }
         }
 
-        milestone 3
+//        milestone 3
         stage('Production') {
             steps {
                 lock(resource: 'production-server', inversePrecedence: true) {
@@ -60,7 +56,6 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                try {
                     DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"
                     withMaven(
                             // Maven installation declared in the Jenkins "Global Tool Configuration"
@@ -71,12 +66,7 @@ pipeline {
 
                         // Run the maven build
 //                sh 'mvn dockerfile:build'
-
                     }
-                } catch (e) {
-//        notify("Something failed building Docker Image")
-                    throw e
-                }
             }
         }
 
@@ -108,16 +98,12 @@ pipeline {
 // here the error occurs
         stage('Kubernetes Setup') {
             steps {
-                try {
                     withCredentials([kubeconfigContent(credentialsId: 'acs-ssh-folder', variable: 'KUBECONFIG_CONTENT')]) {
                         sh '''echo "$KUBECONFIG_CONTENT" > kubeconfig && cat kubeconfig && rm kubeconfig'''
                     }
 
                     sh("kubectl create -f app-deployment.yml -v=8")
-                } catch (e) {
 //        notify("Something failed Kubernetes Setup")
-                    throw e
-                }
             }
         }
 

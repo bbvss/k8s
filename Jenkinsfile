@@ -23,29 +23,34 @@ pipeline {
 
         stage('QA') {
 //    parallel([1,2].collectEntries {duration -> ["tests-$duration", {runTests(duration)}]})
-            echo "Test results for QA: "//${testResult(currentBuild)}"
+            steps {
+                echo "Test results for QA: "
+            }//${testResult(currentBuild)}"}
         }
 
         milestone 1
         stage('Staging') {
-            lock(resource: 'staging-server', inversePrecedence: true) {
-                milestone 2
-                steps {
+            steps {
+                lock(resource: 'staging-server', inversePrecedence: true) {
+                    milestone 2
+
 //            sh 'docker run --name staging -p 8080:8080 bbvss/springboot-k8s'
                 }
                 input message: "Does http://localhost:8080 look good?"
-            }
-            try {
-                checkpoint('Before production')
-            } catch (NoSuchMethodError ignored) {
-                echo 'Checkpoint feature available in CloudBees Jenkins Enterprise.'
+
+                try {
+                    checkpoint('Before production')
+                } catch (NoSuchMethodError ignored) {
+                    echo 'Checkpoint feature available in CloudBees Jenkins Enterprise.'
+                }
             }
         }
 
         milestone 3
         stage('Production') {
-            lock(resource: 'production-server', inversePrecedence: true) {
-                steps {
+            steps {
+                lock(resource: 'production-server', inversePrecedence: true) {
+
                     echo 'Production server looks to be alive'
 //            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
                     echo "Deployed to production http://localhost:8080"
@@ -89,8 +94,8 @@ pipeline {
 //            }
 //        sh('docker login ${CONTAINER_REGISTRY_SERVER} -u ${CONTAINER_REGISTRY_USERNAME} -p ${CONTAINER_REGISTRY_PASSWORD}')
 //        sh('docker login https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg')
-        docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
-        docker push 'bbvss/springboot-k8s'
+                docker login 'https://hub.docker.com -u bbvss -p GtrtGuNrV8456WJg'
+                docker push 'bbvss/springboot-k8s'
 //        sh('docker push bbvss/springboot-k8s')
 //        sh('docker push ' + DOCKER_IMAGE_NAME)
 //        } catch (e) {

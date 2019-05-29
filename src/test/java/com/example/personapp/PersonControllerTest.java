@@ -22,7 +22,7 @@ class PersonControllerTest {
     @Test
     void getPersons() {
         List<Person> persons = restTemplate.getForObject("/persons", List.class);
-        assertTrue(persons.size() == 3);
-        assertEquals("[{name=John}, {name=David}, {name=Peter}]", persons.toString());
+        assertTrue(persons.size() == 4);
+        assertEquals("[{name=John}, {name=David}, {name=Peter}, {name=Walter}]", persons.toString());
     }
 }

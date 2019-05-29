@@ -4,7 +4,7 @@ pipeline {
 
     stages {
         stage('Development') {
-            node {
+            steps {
                 checkout scm
                 withMaven(
                         // Maven installation declared in the Jenkins "Global Tool Configuration"
@@ -30,7 +30,7 @@ pipeline {
         stage('Staging') {
             lock(resource: 'staging-server', inversePrecedence: true) {
                 milestone 2
-                node {
+                steps {
 //            sh 'docker run --name staging -p 8080:8080 bbvss/springboot-k8s'
                 }
                 input message: "Does http://localhost:8080 look good?"
@@ -45,7 +45,7 @@ pipeline {
         milestone 3
         stage('Production') {
             lock(resource: 'production-server', inversePrecedence: true) {
-                node {
+                steps {
                     echo 'Production server looks to be alive'
 //            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
                     echo "Deployed to production http://localhost:8080"
@@ -54,7 +54,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            node {
+            steps {
                 try {
                     DOCKER_IMAGE_NAME = "bbvss/springboot-k8s"
                     withMaven(
@@ -76,7 +76,7 @@ pipeline {
         }
 
         stage('Push image to container registry') {
-            node {
+            steps {
 //        agent { dockerfile true }
 //        try {
 //            docker.withRegistry('https://hub.docker.com', 'docker-credentials') {
@@ -102,7 +102,7 @@ pipeline {
 
 // here the error occurs
         stage('Kubernetes Setup') {
-            node {
+            steps {
                 try {
                     withCredentials([kubeconfigContent(credentialsId: 'acs-ssh-folder', variable: 'KUBECONFIG_CONTENT')]) {
                         sh '''echo "$KUBECONFIG_CONTENT" > kubeconfig && cat kubeconfig && rm kubeconfig'''
@@ -128,7 +128,7 @@ pipeline {
 }
 
 def runTests(duration) {
-    node {
+    steps {
         checkout scm
 //        mvn "-o -f sometests test -Durl=${jettyUrl}${id}/ -Dduration=${duration}"
         withMaven(

@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Development') {
+        stage('Deploy Development') {
             steps {
                 echo "Deploy development"
             }
@@ -60,10 +60,7 @@ pipeline {
 
         stage('Staging Kubernetes Setup') {
             steps {
-                withCredentials([kubeconfigContent(credentialsId: 'acs-ssh-folder', variable: 'KUBECONFIG_CONTENT')]) {
-                    sh '''echo "$KUBECONFIG_CONTENT" > kubeconfig && cat kubeconfig && rm kubeconfig'''
-                }
-                sh("kubectl create -f app-deployment.yml -v=8")
+                echo 'Deploy to kubernetes staging'
             }
         }
 

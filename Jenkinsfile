@@ -31,37 +31,58 @@ pipeline {
             }
         }
 
+        stage('Development') {
+            steps {
+                echo "Deploy development"
+            }
+        }
+
+        stage('Integration / Performance tests') {
+            steps {
+                echo "Test results ..."
+            }
+        }
+
         stage('Staging') {
             steps {
                 lock(resource: 'staging-server', inversePrecedence: true) {
                     //            sh 'docker --name staging run -p 8080:8080 bbvss/springboot-k8s'
                 }
-                input message: "Does http://staging.url:8080 look good?"
+                input message: "Deploy staging...?"
             }
         }
 
-        stage('Production') {
-            steps {
-                lock(resource: 'production-server', inversePrecedence: true) {
-//            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
-                    echo "Deployed to production"
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
+        stage('Build, tag and push staging Docker Image') {
             steps {
                 echo 'Build Docker Image...'
             }
         }
 
-        stage('Push image to container registry') {
+        stage('Staging Kubernetes Setup') {
             steps {
-                echo 'Docker push...'
+                withCredentials([kubeconfigContent(credentialsId: 'acs-ssh-folder', variable: 'KUBECONFIG_CONTENT')]) {
+                    sh '''echo "$KUBECONFIG_CONTENT" > kubeconfig && cat kubeconfig && rm kubeconfig'''
+                }
+                sh("kubectl create -f app-deployment.yml -v=8")
             }
         }
 
-        stage('Kubernetes Setup') {
+        stage('Production') {
+            steps {
+                lock(resource: 'staging-server', inversePrecedence: true) {
+                    //            sh 'docker --name production run -p 8080:8080 bbvss/springboot-k8s'
+                }
+                input message: "Production deployed"
+            }
+        }
+
+        stage('Build, tag and push production Docker Image') {
+            steps {
+                echo 'Build Docker Image...'
+            }
+        }
+
+        stage('Production Kubernetes Setup') {
             steps {
                 withCredentials([kubeconfigContent(credentialsId: 'acs-ssh-folder', variable: 'KUBECONFIG_CONTENT')]) {
                     sh '''echo "$KUBECONFIG_CONTENT" > kubeconfig && cat kubeconfig && rm kubeconfig'''

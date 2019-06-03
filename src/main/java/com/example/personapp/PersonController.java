@@ -17,6 +17,7 @@ class PersonController {
         persons.add(new Person("David"));
         persons.add(new Person("Peter"));
         persons.add(new Person("Walter"));
+        persons.add(new Person("Spetzi"));
         return ResponseEntity.ok().body(persons);
     }
 

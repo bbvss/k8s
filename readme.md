@@ -10,3 +10,4 @@ The following versions are used throughout the example:
 * __Kubernetes__: v1.10.11 
 * __Spring Boot__: 2.1.5.RELEASE
 * __OpendJDK__: 12
+* __Maven inside Docker__: 12

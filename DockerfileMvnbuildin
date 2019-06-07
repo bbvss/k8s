@@ -1,5 +1,5 @@
 # base build image
-FROM maven:3.6.1-jdk-12 as maven
+FROM maven:3.6.1-jdk-13 as maven
 
 #Set the working directory for RUN and ADD commands
 WORKDIR /app
